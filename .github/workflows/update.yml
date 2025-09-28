@@ -15,9 +15,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install yfinance
+      - name: Install dependencies
         run: |
-          pip install yfinance
+          pip install yfinance jpholiday
 
       - name: Run update script
         run: |
