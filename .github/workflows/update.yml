@@ -1,7 +1,7 @@
-name: Update Yuuki Index
+name: update my index
 
 on:
-  workflow_dispatch:  # ← 手動実行を可能にする
+  workflow_dispatch:
 
 jobs:
   update:
@@ -15,14 +15,16 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install yfinance
+        run: |
+          pip install yfinance
+
       - name: Run update script
         run: |
           python update_yuuki_index.py
 
       - name: Commit and push changes
-        run: |
-          git config --global user.name "yuuki"
-          git config --global user.email "your-email@example.com"
-          git add yuuki_index.json yuuki_index.csv
-          git commit -m "📈 手動更新：佑樹指数を最新化"
-          git push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
