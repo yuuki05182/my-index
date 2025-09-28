@@ -26,6 +26,13 @@ jobs:
         run: |
           python update_yuuki_index.py
 
+      - name: Commit local changes before pull
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "Auto-update index files"
+
       - name: Pull latest changes
         run: |
           git config --global user.email "actions@github.com"
