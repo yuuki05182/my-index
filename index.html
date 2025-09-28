@@ -43,7 +43,23 @@
     <li>ユニ・チャーム</li>
   </ul>
 
-  <script>
+<p id="last-updated">更新日時: 読み込み中...</p>
+
+<script>
+fetch("yuuki_index.json")
+  .then(response => response.json())
+  .then(data => {
+    console.log("JSON内容:", data);  // ← デバッグ用
+    const updatedText = `更新日時: ${data.last_updated}`;
+    document.getElementById("last-updated").textContent = updatedText;
+  })
+  .catch(error => {
+    document.getElementById("last-updated").textContent = "更新日時: 読み込み失敗";
+    console.error("更新日時の取得に失敗:", error);
+  });
+</script>
+
+<script>
   let fullData = null;
   let chart = null;
 

@@ -79,7 +79,8 @@ json_data = {
     "dates": index_series.index.strftime('%Y-%m-%d').tolist(),
     "values": index_series.round(2).tolist(),
     "latest_diff": diff,
-    "latest_percent": percent
+    "latest_percent": percent,  
+    "last_updated": datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')
 }
 
 print("✅ 最新日付:", latest_date.strftime('%Y-%m-%d'))
@@ -90,5 +91,28 @@ print("✅ 差分:", diff)
 
 with open('yuuki_index.json', 'w', encoding='utf-8') as f:
     json.dump(json_data, f, ensure_ascii=False, indent=2)
+
+# 履歴ファイルに追加
+log_entry = {
+    "date": latest_date.strftime('%Y-%m-%d'),
+    "value": round(latest, 2),
+    "diff": diff,
+    "percent": percent
+}
+
+log_path = 'update_log.json'
+
+try:
+    with open(log_path, 'r', encoding='utf-8') as f:
+        log_data = json.load(f)
+except FileNotFoundError:
+    log_data = []
+
+log_data.append(log_entry)
+
+with open(log_path, 'w', encoding='utf-8') as f:
+    json.dump(log_data, f, ensure_ascii=False, indent=2)
+
+print("✅ 更新履歴を update_log.json に追加しました。")
 
 print("✅ 佑樹指数を単純平均で更新しました（初期値10000、補正不要）。")
