@@ -1,0 +1,10 @@
+{
+  "initial_average": 12521.02,
+  "base_value": 10000,
+  "tickers": [
+    "6701.T", "6758.T", "9983.T", "7974.T", "6702.T",
+    "6861.T", "6367.T", "9843.T", "8113.T", "6594.T"
+  ],
+  "start_date": "2021-01-01",
+  "index_name": "Yuuki Index"
+}
