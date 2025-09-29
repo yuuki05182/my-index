@@ -2,6 +2,8 @@ name: update my index
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'  # JST 17:00 に毎日実行
 
 permissions:
   contents: write
