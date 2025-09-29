@@ -56,7 +56,17 @@ combined_df.to_csv('yuuki_index_raw_prices.csv')
 
 # 単純平均 → スケーリング
 raw_index = combined_df.mean(axis=1)
+
+# 🔍 ここで確認ログを追加
+print("✅ 2021/1/4 の raw_index:", raw_index.loc["2021-01-04"])
+print("✅ 設定された initial_average:", initial_average)
+print("✅ スケーリング係数:", base_value)
+
+diff = raw_index.loc["2021-01-04"] / initial_average * base_value
+print("✅ 2021/1/4 の佑樹指数（計算結果）:", diff)
+
 index_series = raw_index / initial_average * base_value
+index_series = index_series.round(2)
 index_df = pd.DataFrame({
     'Date': index_series.index.strftime('%Y-%m-%d'),
     'YuukiIndex': index_series.round(2)
