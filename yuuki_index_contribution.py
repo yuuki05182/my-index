@@ -80,7 +80,7 @@ print("✅ ticker_names.keys():", list(ticker_names.keys()))
 plt.bar(labels, values, color='skyblue')
 plt.axhline(y=total_change * 100, color='red', linestyle='--', label=f'合計: {total_change*100:.2f}%')
 
-plt.title("佑樹指数の構成銘柄別貢献度（2021/1/4 → 2025/9/29）", fontproperties=jp_font)
+plt.title("独自指数の構成銘柄別貢献度（2021/1/4 → 2025/9/29）", fontproperties=jp_font)
 plt.ylabel("貢献度（%）", fontproperties=jp_font)
 plt.xlabel("銘柄名", fontproperties=jp_font)
 plt.xticks(rotation=30, fontproperties=jp_font)
