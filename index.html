@@ -1,129 +1,129 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>独自指数</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-  </head>
-<body>
-  <h2>株価履歴</h2>
+  <!DOCTYPE html>
+  <html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>独自指数</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    </head>
+  <body>
+    <h2>株価履歴</h2>
 
-  <!-- 差分と現在値の表示 -->
-  <div id="latestDiffDisplay">
-  <div id="currentLine"></div>
-  <div id="diffLine"></div>
-  </div>
+    <!-- 差分と現在値の表示 -->
+    <div id="latestDiffDisplay">
+    <div id="currentLine"></div>
+    <div id="diffLine"></div>
+    </div>
 
-  <label for="rangeSelector">表示期間：</label>
-<select id="rangeSelector">
-  <option value="30">1か月</option>
-  <option value="90">3か月</option>
-  <option value="180">6か月</option>
-  <option value="365">1年</option>
-  <option value="all">全期間</option>
-</select>
+    <label for="rangeSelector">表示期間：</label>
+  <select id="rangeSelector">
+    <option value="30">1か月</option>
+    <option value="90">3か月</option>
+    <option value="180">6か月</option>
+    <option value="365">1年</option>
+    <option value="all">全期間</option>
+  </select>
 
-<canvas id="yuukiChart" style="width: 100%; max-width: 1000px;" height="500"></canvas>
+  <canvas id="yuukiChart" style="width: 100%; max-width: 1000px;" height="500"></canvas>
 
-<!-- ✅ 銘柄名リストをここに追加 -->
-<div id="stockList" style="margin-top: 20px; padding-left: 10px; padding-right: 10px;">
-  <h3>独自指数の構成銘柄（10社）</h3>
-  <ul style="line-height: 1.6;">
-    <li>ＮＥＣ</li>
-    <li>富士通</li>
-    <li>ソニー</li>
-    <li>任天堂</li>
-    <li>ファーストリテイリング</li>
-    <li>ニトリ</li>
-    <li>ニデック</li>
-    <li>キーエンス</li>
-    <li>ダイキン工業</li>
-    <li>ユニ・チャーム</li>
-  </ul>
+  <!-- ✅ 銘柄名リストをここに追加 -->
+  <div id="stockList" style="margin-top: 20px; padding-left: 10px; padding-right: 10px;">
+    <h3>独自指数の構成銘柄（10社）</h3>
+    <ul style="line-height: 1.6;">
+      <li>ＮＥＣ</li>
+      <li>富士通</li>
+      <li>ソニー</li>
+      <li>任天堂</li>
+      <li>ファーストリテイリング</li>
+      <li>ニトリ</li>
+      <li>ニデック</li>
+      <li>キーエンス</li>
+      <li>ダイキン工業</li>
+      <li>ユニ・チャーム</li>
+    </ul>
 
-<p id="last-updated">更新日時: 読み込み中...</p>
+  <p id="last-updated">更新日時: 読み込み中...</p>
 
-<script>
-fetch("yuuki_index.json")
-  .then(response => response.json())
-  .then(data => {
-    console.log("JSON内容:", data);  // ← デバッグ用
-    const updatedText = `更新日時: ${data.last_updated}`;
-    document.getElementById("last-updated").textContent = updatedText;
-  })
-  .catch(error => {
-    document.getElementById("last-updated").textContent = "更新日時: 読み込み失敗";
-    console.error("更新日時の取得に失敗:", error);
-  });
-</script>
-
-<script>
-  let fullData = null;
-  let chart = null;
-
-  fetch('yuuki_index.json')
+  <script>
+  fetch("yuuki_index.json")
     .then(response => response.json())
     .then(data => {
-      fullData = data;
+      console.log("JSON内容:", data);  // ← デバッグ用
+      const updatedText = `更新日時: ${data.last_updated}`;
+      document.getElementById("last-updated").textContent = updatedText;
+    })
+    .catch(error => {
+      document.getElementById("last-updated").textContent = "更新日時: 読み込み失敗";
+      console.error("更新日時の取得に失敗:", error);
+    });
+  </script>
 
-     const latestValue = data.values[data.values.length - 1];
-const latestDate = data.dates[data.dates.length - 1];
+  <script>
+    let fullData = null;
+    let chart = null;
 
- document.getElementById('diffLine').textContent =
-  `最新日と前日の差：${data.latest_diff}（${data.latest_percent}%）`;
+    fetch('yuuki_index.json')
+      .then(response => response.json())
+      .then(data => {
+        fullData = data;
 
-document.getElementById('currentLine').textContent =
-  `現在値：${latestValue}（${latestDate}）`;
+      const latestValue = data.values[data.values.length - 1];
+  const latestDate = data.dates[data.dates.length - 1];
 
-const days = 30;
-const cutoffIndex = data.dates.length - days;
-const filteredDates = data.dates.slice(cutoffIndex);
-const filteredValues = data.values.slice(cutoffIndex);
+  document.getElementById('diffLine').textContent =
+    `最新日と前日の差：${data.latest_diff}（${data.latest_percent}%）`;
 
-drawChart(filteredDates, filteredValues); // 初期表示を1か月に変更
-});
+  document.getElementById('currentLine').textContent =
+    `現在値：${latestValue}（${latestDate}）`;
 
-  function drawChart(dates, values) {
-    const ctx = document.getElementById('yuukiChart').getContext('2d');
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: dates,
-        datasets: [{
-          label: '独自指数',
-          data: values,
-          borderColor: 'green',
-          backgroundColor: 'rgba(0, 128, 0, 0.1)',
-          fill: true,
-          tension: 0.2
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: false }
+  const days = 30;
+  const cutoffIndex = data.dates.length - days;
+  const filteredDates = data.dates.slice(cutoffIndex);
+  const filteredValues = data.values.slice(cutoffIndex);
+
+  drawChart(filteredDates, filteredValues); // 初期表示を1か月に変更
+  });
+
+    function drawChart(dates, values) {
+      const ctx = document.getElementById('yuukiChart').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: '独自指数',
+            data: values,
+            borderColor: 'green',
+            backgroundColor: 'rgba(0, 128, 0, 0.1)',
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: false }
+          }
         }
+      });
+    }
+
+    document.getElementById('rangeSelector').addEventListener('change', function () {
+      const range = this.value;
+      if (!fullData) return;
+
+      if (range === 'all') {
+        drawChart(fullData.dates, fullData.values);
+      } else {
+        const days = parseInt(range);
+        const cutoffIndex = fullData.dates.length - days;
+        const filteredDates = fullData.dates.slice(cutoffIndex);
+        const filteredValues = fullData.values.slice(cutoffIndex);
+        drawChart(filteredDates, filteredValues);
       }
     });
-  }
-
-  document.getElementById('rangeSelector').addEventListener('change', function () {
-    const range = this.value;
-    if (!fullData) return;
-
-    if (range === 'all') {
-      drawChart(fullData.dates, fullData.values);
-    } else {
-      const days = parseInt(range);
-      const cutoffIndex = fullData.dates.length - days;
-      const filteredDates = fullData.dates.slice(cutoffIndex);
-      const filteredValues = fullData.values.slice(cutoffIndex);
-      drawChart(filteredDates, filteredValues);
-    }
-  });
-</script>
-</body>
-</html>
+  </script>
+  </body>
+  </html>

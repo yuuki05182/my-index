@@ -41,3 +41,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
           force: true
+
+      - name: Show updated JSON
+        run: cat yuuki_index.json

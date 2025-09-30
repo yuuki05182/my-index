@@ -41,18 +41,41 @@ def get_latest_trading_day():
 
 # データ取得
 end_date = (get_latest_trading_day() + timedelta(days=1)).strftime('%Y-%m-%d')
-all_data = {}
+# 一括取得
+raw_df = yf.download(tickers=tickers, start=start_date, end=end_date, group_by="ticker")
+
+# 終値だけを抽出して整形
+close_data = {}
 for ticker in tickers:
     try:
-        df = yf.Ticker(ticker).history(start=start_date, end=end_date)
-        all_data[ticker] = df['Close']
-        print(f"✅ {ticker} のデータ取得成功（{len(df)}件）")
+        close_data[ticker] = raw_df[ticker]["Close"]
+        print(f"✅ {ticker} の終値取得成功（{len(close_data[ticker])}件）")
     except Exception as e:
-        print(f"⚠️ {ticker} のデータ取得失敗: {e}")
+        print(f"⚠️ {ticker} の終値取得失敗: {e}")
 
-combined_df = pd.DataFrame(all_data)
+combined_df = pd.DataFrame(close_data)
 combined_df.index.name = 'Date'
 combined_df.to_csv('yuuki_index_raw_prices.csv')
+
+combined_df.index.name = 'Date'
+combined_df.to_csv('yuuki_index_raw_prices.csv')
+
+# 🔍 2025-09-29 の終値が存在するか確認
+target_date = "2025-09-29"
+missing_on_target = []
+
+for ticker in tickers:
+    try:
+        value = combined_df.loc[target_date, ticker]
+        if pd.isna(value):
+            missing_on_target.append(ticker)
+    except KeyError:
+        missing_on_target.append(ticker)
+
+if missing_on_target:
+    print(f"⚠️ {target_date} に欠損している銘柄: {missing_on_target}")
+else:
+    print(f"✅ {target_date} の全銘柄データが揃っています")
 
 # 単純平均 → スケーリング
 raw_index = combined_df.mean(axis=1)
@@ -74,8 +97,31 @@ index_df = pd.DataFrame({
 index_df.to_csv('yuuki_index.csv', index=False)
 
 # JSON生成
-latest_date = index_series.index[-1]  # 最新の営業日（datetime型）
-previous_date = get_previous_trading_day(latest_date)
+dates = index_series.index
+latest_date = dates[-1]  # 最新の営業日（datetime型）
+
+dates = index_series.index
+latest_date = dates[-1]
+
+# カレンダー上の前日を計算
+calendar_previous = latest_date - timedelta(days=1)
+
+# インデックスに存在するか確認
+if calendar_previous in dates:
+    previous_date = calendar_previous
+    print(f"✅ カレンダー上の前日 {calendar_previous.strftime('%Y-%m-%d')} を使用しました。")
+else:
+    previous_date = dates[-2]
+    print(f"⚠️ カレンダー上の前日 {calendar_previous.strftime('%Y-%m-%d')} が欠損していたため、{previous_date.strftime('%Y-%m-%d')} を使用しました。")
+
+    # 前日データの欠損銘柄を確認
+previous_date_str = previous_date.strftime('%Y-%m-%d')
+missing_tickers = [ticker for ticker in combined_df.columns if pd.isna(combined_df.loc[previous_date_str, ticker])]
+
+if missing_tickers:
+    print(f"⚠️ 前日 {previous_date_str} に欠損している銘柄: {missing_tickers}")
+else:
+    print(f"✅ 前日 {previous_date_str} の全銘柄データが揃っています")
 
 latest = index_series.loc[latest_date]
 previous = index_series.loc[previous_date]
@@ -85,12 +131,18 @@ percent = round((diff / previous) * 100, 2)
 
 diff = round(latest - previous, 2)
 percent = round((diff / previous) * 100, 2)
+
+from datetime import datetime, timedelta, timezone
+
+jst_now = datetime.now(timezone.utc) + timedelta(hours=9)
+formatted_time = jst_now.strftime('%Y年%m月%d日 %H:%M:%S')
+
 json_data = {
     "dates": index_series.index.strftime('%Y-%m-%d').tolist(),
     "values": index_series.round(2).tolist(),
     "latest_diff": diff,
     "latest_percent": percent,  
-    "last_updated": datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')
+    "last_updated": formatted_time
 }
 
 print("✅ 最新日付:", latest_date.strftime('%Y-%m-%d'))
