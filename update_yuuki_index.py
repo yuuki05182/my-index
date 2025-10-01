@@ -20,15 +20,13 @@ def get_previous_trading_day(reference_date=None):
             return candidate
 
 # 設定値の展開
-initial_average = config['initial_average']
 base_value = config['base_value']
 tickers = config['tickers']
 start_date = config['start_date']
 
 print("✅ 設定ファイル読み込み成功")
 print("✅ 使用する銘柄:", tickers)
-print("✅ 開始日:", start_date)
-print("✅ 初期平均値:", initial_average)
+print("✅ 開始日:", start_date) 
 print("✅ 基準値:", base_value)
 
 # 最新営業日を取得
@@ -80,9 +78,14 @@ else:
 # 単純平均 → スケーリング
 raw_index = combined_df.mean(axis=1)
 
+# ✅ 初期平均値を実データから取得（2021年1月4日を基準）
+if "2021-01-04" in raw_index.index:
+    initial_average = raw_index.loc["2021-01-04"]
+else:
+    raise ValueError("2021-01-04 のデータが存在しません。佑樹指数の基準値を設定できません。")
+
 # 🔍 ここで確認ログを追加
 print("✅ 2021/1/4 の raw_index:", raw_index.loc["2021-01-04"])
-print("✅ 設定された initial_average:", initial_average)
 print("✅ スケーリング係数:", base_value)
 
 diff = raw_index.loc["2021-01-04"] / initial_average * base_value
@@ -123,6 +126,9 @@ if missing_tickers:
 else:
     print(f"✅ 前日 {previous_date_str} の全銘柄データが揃っています")
 
+# 🔧 前日データの欠損数をカウント（confirmed フラグ用）
+missing_count = combined_df.loc[previous_date_str].isna().sum()
+
 latest = index_series.loc[latest_date]
 previous = index_series.loc[previous_date]
 
@@ -140,9 +146,10 @@ formatted_time = jst_now.strftime('%Y年%m月%d日 %H:%M:%S')
 json_data = {
     "dates": index_series.index.strftime('%Y-%m-%d').tolist(),
     "values": index_series.round(2).tolist(),
-    "latest_diff": diff,
-    "latest_percent": percent,  
-    "last_updated": formatted_time
+    "latest_diff": diff if diff is not None else None,
+    "latest_percent": percent if percent is not None else None,
+    "last_updated": formatted_time,
+    "confirmed": bool(missing_count == 0)  # 欠損ゼロなら True、欠損ありなら False
 }
 
 print("✅ 最新日付:", latest_date.strftime('%Y-%m-%d'))
@@ -159,7 +166,8 @@ log_entry = {
     "date": latest_date.strftime('%Y-%m-%d'),
     "value": round(latest, 2),
     "diff": diff,
-    "percent": percent
+    "percent": percent,
+    "confirmed": bool(missing_count == 0)
 }
 
 log_path = 'update_log.json'
@@ -170,6 +178,8 @@ try:
 except FileNotFoundError:
     log_data = []
 
+# ✅ すでに同じ日付があるか確認して上書き
+log_data = [entry for entry in log_data if entry["date"] != latest_date.strftime('%Y-%m-%d')]
 log_data.append(log_entry)
 
 with open(log_path, 'w', encoding='utf-8') as f:

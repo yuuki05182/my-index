@@ -124,5 +124,12 @@
     "value": 11572.98,
     "diff": 8258.72,
     "percent": 249.19
+  },
+  {
+    "date": "2025-10-01",
+    "value": 11627.53,
+    "diff": 8315.48,
+    "percent": 251.07,
+    "confirmed": false
   }
 ]

@@ -18,10 +18,10 @@
 
     <label for="rangeSelector">表示期間：</label>
   <select id="rangeSelector">
-    <option value="30">1か月</option>
-    <option value="90">3か月</option>
-    <option value="180">6か月</option>
-    <option value="365">1年</option>
+    <option value="30">30日</option>
+    <option value="90">90日</option>
+    <option value="180">180日</option>
+    <option value="365">365日</option>
     <option value="all">全期間</option>
   </select>
 
@@ -45,19 +45,28 @@
 
   <p id="last-updated">更新日時: 読み込み中...</p>
 
+  <div id="last-updated"></div>
+
   <script>
   fetch("yuuki_index.json")
     .then(response => response.json())
     .then(data => {
       console.log("JSON内容:", data);  // ← デバッグ用
+
       const updatedText = `更新日時: ${data.last_updated}`;
-      document.getElementById("last-updated").textContent = updatedText;
+      let statusText = "";
+
+      if (!data.confirmed) {
+        statusText = `<span style="color: red;">※速報版（欠損あり）</span>`;
+      }
+
+      document.getElementById("last-updated").innerHTML = `${updatedText}<br>${statusText}`;
     })
     .catch(error => {
       document.getElementById("last-updated").textContent = "更新日時: 読み込み失敗";
       console.error("更新日時の取得に失敗:", error);
     });
-  </script>
+</script>
 
   <script>
     let fullData = null;

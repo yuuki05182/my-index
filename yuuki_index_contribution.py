@@ -1,9 +1,18 @@
 import yfinance as yf
 import matplotlib.pyplot as plt
 import pandas as pd
+import jpholiday
+from datetime import datetime, timedelta
+
+def get_latest_trading_day():
+    today = datetime.today()
+    for i in range(0, 7):
+        candidate = today - timedelta(days=i)
+        if candidate.weekday() < 5 and not jpholiday.is_holiday(candidate):
+            return candidate.strftime('%Y-%m-%d')
 
 # ✅ 日本語フォント設定（ここに追加）
-plt.rcParams['font.family'] = 'IPAexGothic'  # または 'Noto Sans CJK JP'
+plt.rcParams['font.family'] = 'Yu Gothic'  # または 'Noto Sans CJK JP'
 
 tickers = [
     "6701.T", "6758.T", "9983.T", "7974.T", "6702.T",
@@ -11,7 +20,7 @@ tickers = [
 ]
 
 start_date = "2021-01-04"
-end_date = "2025-09-29"
+end_date = get_latest_trading_day()
 
 contributions = {}
 total_change = 0
@@ -80,7 +89,7 @@ print("✅ ticker_names.keys():", list(ticker_names.keys()))
 plt.bar(labels, values, color='skyblue')
 plt.axhline(y=total_change * 100, color='red', linestyle='--', label=f'合計: {total_change*100:.2f}%')
 
-plt.title("独自指数の構成銘柄別貢献度（2021/1/4 → 2025/9/29）", fontproperties=jp_font)
+plt.title(f"独自指数の構成銘柄別貢献度（{start_date} → {end_date}）", fontproperties=jp_font)
 plt.ylabel("貢献度（%）", fontproperties=jp_font)
 plt.xlabel("銘柄名", fontproperties=jp_font)
 plt.xticks(rotation=30, fontproperties=jp_font)
