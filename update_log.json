@@ -135,8 +135,8 @@
   {
     "date": "2025-10-02",
     "value": 11581.96,
-    "diff": 8267.64,
-    "percent": 249.45,
-    "confirmed": false
+    "diff": -53.54,
+    "percent": -0.46,
+    "confirmed": true
   }
 ]
