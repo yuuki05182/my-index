@@ -106,16 +106,11 @@ latest_date = dates[-1]  # 最新の営業日（datetime型）
 dates = index_series.index
 latest_date = dates[-1]
 
-# カレンダー上の前日を計算
-calendar_previous = latest_date - timedelta(days=1)
+latest_date = index_series.index[-1]
+previous_date = index_series.index[-2]
 
-# インデックスに存在するか確認
-if calendar_previous in dates:
-    previous_date = calendar_previous
-    print(f"✅ カレンダー上の前日 {calendar_previous.strftime('%Y-%m-%d')} を使用しました。")
-else:
-    previous_date = dates[-2]
-    print(f"⚠️ カレンダー上の前日 {calendar_previous.strftime('%Y-%m-%d')} が欠損していたため、{previous_date.strftime('%Y-%m-%d')} を使用しました。")
+print(f"✅ 最新日付: {latest_date.strftime('%Y-%m-%d')}")
+print(f"✅ 前日付: {previous_date.strftime('%Y-%m-%d')}")
 
     # 前日データの欠損銘柄を確認
 previous_date_str = previous_date.strftime('%Y-%m-%d')
