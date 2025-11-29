@@ -138,5 +138,12 @@
     "diff": -53.54,
     "percent": -0.46,
     "confirmed": true
+  },
+  {
+    "date": "2025-11-28",
+    "value": 12713.41,
+    "diff": -33.2,
+    "percent": -0.26,
+    "confirmed": true
   }
 ]
