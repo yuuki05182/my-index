@@ -140,10 +140,10 @@
     "confirmed": true
   },
   {
-    "date": "2025-11-28",
-    "value": 12713.41,
-    "diff": -33.2,
-    "percent": -0.26,
-    "confirmed": true
+    "date": "2025-12-01",
+    "value": 12687.55,
+    "diff": -227.16,
+    "percent": -1.76,
+    "confirmed": false
   }
 ]
