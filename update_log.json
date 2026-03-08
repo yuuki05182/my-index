@@ -141,9 +141,9 @@
   },
   {
     "date": "2026-03-06",
-    "value": 13465.33,
-    "diff": 196.9,
-    "percent": 1.48,
-    "confirmed": true
+    "value": 13552.86,
+    "diff": 198.76,
+    "percent": 1.49,
+    "confirmed": false
   }
 ]
