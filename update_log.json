@@ -140,10 +140,10 @@
     "confirmed": true
   },
   {
-    "date": "2026-04-23",
-    "value": 14050.62,
-    "diff": -284.39,
-    "percent": -1.98,
-    "confirmed": false
+    "date": "2026-04-24",
+    "value": 14023.51,
+    "diff": 66.87,
+    "percent": 0.48,
+    "confirmed": true
   }
 ]
