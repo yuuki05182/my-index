@@ -141,9 +141,9 @@
   },
   {
     "date": "2026-07-24",
-    "value": 15262.91,
-    "diff": -121.59,
-    "percent": -0.79,
-    "confirmed": true
+    "value": 17136.42,
+    "diff": -154.79,
+    "percent": -0.9,
+    "confirmed": false
   }
 ]
