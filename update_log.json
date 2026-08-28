@@ -140,10 +140,10 @@
     "confirmed": true
   },
   {
-    "date": "2026-08-27",
+    "date": "2026-08-28",
     "value": NaN,
     "diff": NaN,
     "percent": NaN,
-    "confirmed": false
+    "confirmed": true
   }
 ]
