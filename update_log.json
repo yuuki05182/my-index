@@ -138,5 +138,12 @@
     "diff": -53.54,
     "percent": -0.46,
     "confirmed": true
+  },
+  {
+    "date": "2026-10-16",
+    "value": 16147.62,
+    "diff": 128.84,
+    "percent": 0.8,
+    "confirmed": true
   }
 ]
