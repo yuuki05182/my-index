@@ -141,9 +141,9 @@
   },
   {
     "date": "2026-11-06",
-    "value": NaN,
-    "diff": NaN,
-    "percent": NaN,
+    "value": 15314.43,
+    "diff": -559.16,
+    "percent": -3.52,
     "confirmed": true
   }
 ]
